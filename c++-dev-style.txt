@@ -1,0 +1,171 @@
+  游国网络 c++编程规范
+  
+  既然我们是在linux环境编程，就使用GNU的风格
+  
+  
+   变量命名：
+   1. 请在名字中使用下划线以分隔单词，坚持使用小写； 把大写字母留给宏和枚举常量，以及根据统一的惯例使用的前缀。 
+      例如，应该使用类似ignore_space_change_flag的名字；不要使用类似iCantReadThis的名字。
+      
+   2. 变量命名要能体现语义  
+      比如 int result = this->do_something(); 
+           int64_t content_length = end_pos - begin_pos + 1; 
+      不要使用 int64_t n = end_pos - begin_pos + 1; 这样脱离此行就无法读懂的风格。
+      
+   3. 同类型的变量尽量单独定义(利于注释)，并且必须要初始化。
+      int64_t begin_pos = 0;        // the begin position of file.
+      int64_t end_pos   = -1;       // the end position of file.
+   4. 类型定义
+      1) 数值类型定义
+         int8_t int16_t int32_t int64_t 
+         uint8_t uint16_t uint32_t uint64_t 
+
+      2) STL容器类型, 除非临时定义否则一定要用typedef
+      typedef std::deque<std::string> msg_queue_t;
+      typedef std::deque<std::string>::iterator msg_queue_iter;
+      类型定义要能体现出容器类型, msg_queue_t  有三段组成 msg(变量语文) queue(容器类型) t(表示这是一个类型定义)
+   
+   条件语句   
+   1. 条件语句的关键字与括号之间要有空格分隔
+      if (result == 0)
+      
+   2. 尽力避免在if的条件中进行赋值。例如，不要写：
+        if ((foo = (char *)malloc(sizeof *foo)) == 0)
+          fatal("virtual memory exhausted");
+      而要写：
+        foo = (char *)malloc(sizeof *foo);
+        if (foo == 0)
+          fatal("virtual memory exhausted");
+   3. 在逗号之后添加空格，当我们把一个表达式分成多行的时候，在操作符之前而不是之后分割。
+        if (foo_this_is_long && (bar > win(x, y, z))
+            && remaining_condition)
+   4. 尽力避免让两个不同优先级的操作符出现在相同的对齐方式中。例如，不要象下面那样写：
+
+        mode = (inmode[j] == VOIDmode
+                || GET_MODE_SIZE (outmode[j]) > GET_MODE_SIZE(inmode[j])
+                ? outmode[j] : inmode[j]);
+     应该附加额外的括号以使得文本缩进可以表示出这种嵌套：
+
+        mode = ((inmode[j] == VOIDmode
+                 || (GET_MODE_SIZE(outmode[j]) > GET_MODE_SIZE(inmode[j])))
+                ? outmode[j] : inmode[j]);
+   5. 按照如下方式排版do-while语句：
+      do
+      {
+        result = foo(arg);
+      }while (result != 0);
+   6. switch写法
+           // header
+      switch(status)
+      {
+      case 200:
+        os << "HTTP/1.1 200 OK\r\n";
+        break;
+      case 206:
+        os << "HTTP/1.1 206 Partial Content\r\n";
+        break;
+      case 304:
+        os << "HTTP/1.1 304 Not Modified\r\n";
+        break;
+      case 404:
+        {  
+          // 如果有变量定义要加{}括起。
+          int result = this->do_something();
+          if (result != 0)
+            this->do_xxxx();
+          break;
+        }
+      default:
+        break;
+      }
+   函数编写
+   1. 函数声明（参数对齐属于ACE的风格，利于注释）
+      int response_to_client(int status,
+                             int64_t begin_pos = 0,            // transfer begin pos
+                             int64_t end_pos = 0,              // transfer end pos 
+                             int64_t file_size = 0,            // file size
+                             time_t last_modified_time = 0);
+   2. 函数定义（默认值要明确写出）
+      int response_to_client(int status,
+                             int64_t begin_pos/* = 0*/,        // transfer begin pos
+                             int64_t end_pos/* = 0*/,          // transfer end pos 
+                             int64_t file_size/* = 0*/,        // file size
+                             time_t last_modified_time/* = 0*/)
+      {
+        // 换行的对齐方式以括号为基准。
+        net_log->trace("[%d] response to client [%d]",
+                       this->session_id_,
+                       status);
+        assert(m == ndk::event_handler::read_mask
+               || m == ndk::event_handler::timer_mask
+               || m == ndk::event_handler::write_mask
+               || m == ndk::event_handler::connect_mask
+               || m == 0
+               || m == ndk::event_handler::all_events_mask);
+          
+        // 有返回值的函数，在结尾一定要有返回值，否则编译器会有警告                
+        return 0;
+      }
+        
+   命名空间
+   1. 使用标准库时或其他有命名空间时，最好加上完整的命名空间
+      比如  std::string str = "1234";
+            std::map<std::string, int> msg_list;
+      
+   类
+   1. 类声明   
+      // 类名（遵循 stl 的风格, 使用小写字母，珍爱小手指）
+      class http_client
+      {
+      public:
+                                      // 以对象为参数时，要传引用
+        http_client(const std::string &url);
+      
+        virtual ~http_client();
+      
+        // 
+        virtual int handle_input(int handle);
+      
+        // 类属性要通过属性方法来访问，这样有利于以后修改行为。
+        inline int get_handle() const
+        { return this->handle_; }
+      
+        inline void set_handle(int h)
+        { this->handle_ = h; }
+      private:
+        // 成员变量以_结尾，区分普通变量(ACE风格）
+        // 成员变量的定义顺序尽量以所占字节大小排列，减少内存浪费
+        int handle_;
+        
+        //
+        int64_t content_length_;
+        
+        std::string url_;
+      
+        // 复杂类型最好使用typedef，尤其是STL，当变换数据结构时，只需要改定义处即可。
+        typedef std::deque<std::string> msg_list_t;
+        typedef std::deque<std::string>::iterator msg_list_iter;
+
+        msg_list_t msg_list_;
+      };
+   2. 类实现
+      http_client::http_client()
+        // 成员变量初始化的次序要和定义的次序相同，否则编译器会出警告
+      : handle_(-1),
+        content_length_(0)
+      {
+      }      
+      int http_client::handle_input(int handle)
+      {
+        // 如果有函数变量没有使用可以不写参数名，否则编译器会出警告
+        
+        // 使用成员变量和方法时要用this->标识， 
+        // 1. 增加编译速度 2，IDE会有高亮显示 3，区别普通变量
+        this->content_length_ = 1111;
+        return 0;
+      }
+    GNU编程惯用法
+    1. 函数返回值 0 表示成功 -1 表示失败 
+    2. 每行代码不超过60个字符，一般就是不超过屏幕一半的宽度
+    3. 数值类型尽量使用uint64_t 这样的标准定义，因为我们在64位环境编程
+    4. 要包含的头文件尽量放到cpp中，
