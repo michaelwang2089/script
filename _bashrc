@@ -1,0 +1,86 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
+# User specific aliases and functions
+
+export PATH=$PATH:~/script
+export SVN_EDITOR=vim
+
+# bash edit type
+#set -o vi
+
+# quick return
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+# quick enter
+alias _sg="cd ~/work/dev/"
+alias _yg="cd ~/work/gserver/"
+
+alias _ts="cd ~/test"
+
+alias _class="python ~/script/work/classtmp.py ./"
+#alias _make="sh ~/script/make_sg_server.sh"
+#alias _cmake="sh ~/script/cmake_sg_server.sh"
+#alias _run="sh ~/script/run_sg_server.sh"
+alias _make="cd ~/work/gserver/db_proxy && make -j4 platform=-DFOR_IROBOT\
+  && cd ~/work/gserver/world && make -j4 platform=-DFOR_IROBOT"
+alias _cmake="cd ~/work/gserver/db_proxy && make clean && make -j4 platform=-DFOR_IROBOT\
+  && cd ~/work/gserver/world &&make clean && make -j4 platform=-DFOR_IROBOT"
+alias _run="cd ~/work/gserver/s9/s9 && sh run.sh restart all"
+alias _makem="sh ~/script/make_sy_server.sh"
+alias _cmakem="sh ~/script/cmake_sy_server.sh"
+alias _checkout="sh ~/script/checkout_sg.sh"
+alias _ctags="ctags -R --c++-kinds=+px --fields=+iaS --extra=+q"
+alias _nmake="sh ~/script/make_ng_server.sh"
+alias _nrun="sh ~/script/run_ng_server.sh"
+alias _nrun="python /home/michaelwang/work/gserver/s13/s13/run.py restart iworld"
+
+alias _mysql="mysql -uhan -pgh78dp -P3308 -h192.168.1.220 michaelwang"
+alias _mysql_n="mysql -uhan -pgh78dp -P3308 -h192.168.1.220 game_s9"
+alias _tmp="vim ~/tmp/use"
+
+alias _sd="sh svn_diff.sh"
+alias _sdr="sh svn_diff_r.sh"
+alias _sci="svn commit -m"
+alias _st="sh ~/script/svn_grep.sh"
+
+alias _stat="stat ~/workspace/backend/logic/bin/ilogic  > ~/tmp/stat_test && vim ~/tmp/stat_test"
+
+alias _tl1="tail -f ~/work/dev/logic/bin/log/logic.1.err_log"
+alias _tl2="tail -f ~/work/dev/logic/bin/log/logic.2.err_log"
+alias _tw="tail -f ~/work/dev/world/bin/log/world.err_log"
+alias _td="tail -f ~/work/dev/db_proxy/bin/log/world.err_log"
+
+alias _tow="\
+  ln -s -f -n ../config world/config \
+  && ln -s -f -n ../config logic/config \
+  && ln -s -f -n ../../etc/svc.json logic/bin/svc.json \
+  && ln -s -f -n ../../etc/svc.json world/bin/svc.json \
+  && ln -s -f -n ../../etc/svc.json db_proxy/bin/svc.json \
+  && ln -s -f -n ../../etc/svc.json chat/bin/svc.json " 
+alias _tom="\
+  ln -s -f -n ../cfg world/config \
+  && ln -s -f -n ../cfg logic/config \
+  && ln -s -f -n ../../etc/svc_m.json logic/bin/svc.json \
+  && ln -s -f -n ../../etc/svc_m.json world/bin/svc.json \
+  && ln -s -f -n ../../etc/svc_m.json db_proxy/bin/svc.json \
+  && ln -s -f -n ../../etc/svc_m.json chat/bin/svc.json " 
+
+alias fuck="links www.qiushibaike.com"
+# 
+# write 
+# who
+# uname
+# hostname 
+# seq 50|xargs -i ls  
+# file -Lz * | grep ASCII | cut -d":" -f1 | xargs ls -ltr 
+# wc -l ‘file * | grep ASCII | cut -d":" -f1 | grep ASCII | cut -d":" -f1‘
+# crontab $file_name
+# date -d '1 day ago' 
